@@ -12,27 +12,27 @@
   notify: restart apache
 
 - name: Create directory to store certificates
-  tags: ["ssl"]
+  tags: certificates
   file:
     path: "{{ ssl_cert_directory }}"
     state: directory
 
 - name: Copy CA certificate public key
-  tags: ["ssl"]
+  tags: certificates
   copy:
     src: "{{ apache_certificates.ca_cert_src }}"
     dest: "{{ apache_certificates_dir.ca_cert }}"
   notify: restart apache
 
 - name: Copy server certificate public key
-  tags: ["ssl"]
+  tags: certificates
   copy:
     src: "{{ apache_certificates.server_cert_src }}"
     dest: "{{ apache_certificates_dir.server_cert }}"
   notify: restart apache
 
 - name: Copy server certificate private key
-  tags: ["ssl"]
+  tags: certificates
   copy:
     src: "{{ apache_certificates.server_key_src }}"
     dest: "{{ apache_certificates_dir.server_key }}"
