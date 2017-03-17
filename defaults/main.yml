@@ -13,6 +13,9 @@ apache_certificates:
   server_cert_src: "notsecure.crt"
   server_key_src: "notsecure.key"
 
+apache_use_default_http_vhost: false
+apache_use_default_https_vhost: false
+
 apache_certificates_dir:
   ca_cert: "{{ ssl_cert_directory }}/ca.crt"
   server_cert: "{{ ssl_cert_directory }}/server.crt"
