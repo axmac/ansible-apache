@@ -10,6 +10,11 @@
     name: mod_ssl
     state: latest
 
+- name: Enable service
+  service:
+    name: httpd
+    enabled: yes
+
 - name: Create directory to store certificates
   tags: certificates
   file:
