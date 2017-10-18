@@ -1,16 +1,16 @@
 ---
 galaxy_info:
-  author: John Paul Newman
+  author: Alex McClennan
   description: Apache2
   license: license (BSD, MIT)
   min_ansible_version: 2.0
   platforms:
-  - name: Debian
+  - name: Centos
     versions:
-    - all
-  - name: Ubuntu
+    - 7
+  - name: RHEL
     versions:
-    - all
+    - 7
   galaxy_tags:
     - apache
     - web

@@ -3,6 +3,7 @@
 server_name: localhost
 
 apache_path: /etc/httpd
+apache_version: 2.4
 apache_default_delete_vhost: true
 apache_vhosts_file: 'ansible-vhosts.conf'
 apache_log_dir: /var/log/httpd

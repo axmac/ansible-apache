@@ -1,5 +1,4 @@
 ---
-# tasks file for axmac.apache
 - name: Install apache
   yum:
     name: httpd
@@ -51,14 +50,25 @@
     mode: 0755
   notify: restart apache
 
-- name: Apply httpd.conf
+- name: Apply httpd.conf for Apache 2.2
   template:
-    src: httpd.conf.j2
+    src: httpd22.conf.j2
     dest: "{{ apache_path }}/conf/httpd.conf"
     owner: root
     group: root
     mode: 0644
   notify: restart apache
+  when: apache_version == 2.2
+
+- name: Apply httpd.conf for Apache 2.4
+  template:
+    src: httpd24.conf.j2
+    dest: "{{ apache_path }}/conf/httpd.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  when: apache_version == 2.4
 
 - name: Apply ssl.conf
   template:
