@@ -1,8 +1,7 @@
-#
 # When we also provide SSL we have to listen to the 
 # the HTTPS port in addition.
 #
-{% if apache_use_default_https_vhost == 'false' %}
+{% if apache_use_default_https_vhost == 'true' %}
 Listen 443
 {% endif %}
 
@@ -51,7 +50,6 @@ SSLRandomSeed connect builtin
 SSLCryptoDevice builtin
 #SSLCryptoDevice ubsec
 
-{% if apache_use_default_https_vhost == 'false' %}
 ##
 ## SSL Virtual Host Context
 ##
@@ -217,4 +215,3 @@ CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
 </VirtualHost>                                  
-{% endif %}

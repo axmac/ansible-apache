@@ -1,0 +1,59 @@
+---
+- name: Bring up docker containers
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    inventory:
+      - name: apache_centos7_1
+        image: "chrismeyers/centos7"
+      - name: apache_centos7_2
+        image: "chrismeyers/centos7"
+      - name: apache_centos7_3
+        image: "chrismeyers/centos7"
+    # Connecting to docker on localhost
+    provision_docker_use_tls: no
+
+  roles:
+    - { role: provision_docker, provision_docker_inventory: "{{inventory}}" }
+
+# Workarounds needed when running the tests in Docker.
+- name: Apply Docker workarounds
+  hosts: docker_containers
+  remote_user: root
+
+  tasks:
+    # https://github.com/CentOS/sig-cloud-instance-images/issues/15
+    - shell: touch /var/lib/rpm/*
+
+    # https://docs.oracle.com/cd/E52668_01/E69348/html/uek4-czc_xmc_xt.html
+    - package:
+        name: yum-plugin-ovl
+        state: latest
+
+- name: Install Apache with default vhost
+  hosts: apache_centos7_1
+  remote_user: root
+
+  roles:
+    - axmac.apache
+
+- name: Install Apache with alias vhost
+  hosts: apache_centos7_2
+  remote_user: root
+
+  vars_files:
+    - vars/main_alias.yml
+
+  roles:
+    - axmac.apache
+
+- name: Install Apache with proxy vhost
+  hosts: apache_centos7_3
+  remote_user: root
+
+  vars_files:
+    - vars/main_proxy.yml
+
+  roles:
+    - axmac.apache

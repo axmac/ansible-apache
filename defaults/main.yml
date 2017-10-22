@@ -3,24 +3,20 @@
 server_name: localhost
 
 apache_path: /etc/httpd
-apache_version: 2.4
-apache_default_delete_vhost: true
-apache_vhosts_file: 'ansible-vhosts.conf'
 apache_log_dir: /var/log/httpd
-
-ssl_cert_directory: "{{ apache_path }}/ssl"
-apache_certificates:
-  ca_cert_src: "notsecure_ca.crt"
-  server_cert_src: "notsecure.crt"
-  server_key_src: "notsecure.key"
+apache_vhosts_file: 'ansible-vhost.conf'
 
 apache_use_default_http_vhost: false
 apache_use_default_https_vhost: false
 
-apache_certificates_dir:
-  ca_cert: "{{ ssl_cert_directory }}/ca.crt"
-  server_cert: "{{ ssl_cert_directory }}/server.crt"
-  server_key: "{{ ssl_cert_directory }}/server.key"
+ssl_cert_directory: "{{ apache_path }}/ssl"
+apache_certificates:
+  ca_cert_src: 'files/ca_cert.pem'
+  server_cert_src: 'files/server_cert.pem'
+  server_key_src: 'files/server_key.pem'
+  ca_cert_dest: "{{ ssl_cert_directory }}/apache_ca.crt"
+  server_key_dest: "{{ ssl_cert_directory }}/apache_server.key"
+  server_cert_dest: "{{ ssl_cert_directory }}/apache_server.crt"
 
 apache_virtualhosts:
   - listening_ip: '*'
@@ -41,9 +37,9 @@ apache_virtualhosts:
     server_name: localhost
     document_root: /var/www
     SSLEngine: "On"
-    SSLCACertificateFile: "{{ apache_certificates_dir.ca_cert }}"
-    SSLCertificateFile: "{{ apache_certificates_dir.server_cert }}"
-    SSLCertificateKeyFile: "{{ apache_certificates_dir.server_key }}"
+    SSLCACertificateFile: "{{ apache_certificates.ca_cert_dest }}"
+    SSLCertificateKeyFile: "{{ apache_certificates.server_key_dest }}"
+    SSLCertificateFile: "{{ apache_certificates.server_cert_dest }}"
     _directories:
       - _root: /var/www
         Options: Indexes FollowSymLinks
