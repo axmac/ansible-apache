@@ -1,14 +1,19 @@
-Forked from jpnewman.apache to install Apache on Centos 6.
+![TravisCI build status](https://travis-ci.org/axmac/axmac.apache.svg?branch=master)
+
+Forked from jpnewman.apache to install Apache on Centos.
 
 # axmac.apache
 
-This is an Ansible role to install apache.
+This is an Ansible role to install Apache 2.4 on Centos 6 and 7.
+
+The role uses [software collectcions](https://www.softwarecollections.org/en/scls/rhscl/httpd24/) to install Apache 2.4 on Centos 6.
 
 ## Requirements
 
 Ansible 2.x
 
 ## Role Variables
+
 
 |Variable|Description|Default|
 |---|---|:--|
@@ -69,8 +74,8 @@ apache_virtualhosts:
     server_name: localhost
     document_root: /var/www
     SSLEngine: "On"
-    SSLCertificateFile: "{{ apache_certificates_dir.server_cert }}"
-    SSLCertificateKeyFile: "{{ apache_certificates_dir.server_key }}"
+    SSLCertificateFile: "{{ apache_certificates.server_cert }}"
+    SSLCertificateKeyFile: "{{ apache_certificates.server_key }}"
     _directories:
       - _root: /var/www
         Options: Indexes FollowSymLinks
@@ -87,7 +92,7 @@ For more examples see the following role files: -
 
 ## Dependencies
 
-none
+None.
 
 ## Example Playbook
 
@@ -97,11 +102,22 @@ none
 
 ## Testing
 
-For more information on testing the template review readme ```./tests/templates/README.md```
+### Dependencies
+
+- Docker
+
+### Setup
+
+    $ pip install docker-py
+    $ ansible-galaxy install -r tests/requirements.yml -p tests/galaxy/roles
+
+### Run
+
+    $ ANSIBLE_ROLES_PATH=../:tests/galaxy/roles ansible-playbook tests/main.yml
 
 ## License
 
-MIT / BSD
+MIT
 
 ## Author Information
 

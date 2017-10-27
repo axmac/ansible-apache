@@ -39,7 +39,7 @@ ServerRoot "/etc/httpd"
 # prevent Apache from glomming onto all bound IP addresses.
 #
 #Listen 12.34.56.78:80
-{% if apache_use_default_http_vhost == 'false' %}
+{% if apache_use_default_http_vhost == 'true' %}
 Listen 80
 {% endif %}
 
