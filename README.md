@@ -6,7 +6,7 @@ Forked from jpnewman.apache to install Apache on Centos.
 
 This is an Ansible role to install Apache 2.4 on Centos 6 and 7.
 
-The role uses [software collectcions](https://www.softwarecollections.org/en/scls/rhscl/httpd24/) to install Apache 2.4 on Centos 6.
+The role uses [software collections](https://www.softwarecollections.org/en/scls/rhscl/httpd24/) to install Apache 2.4 on Centos 6.
 
 ## Requirements
 
@@ -35,6 +35,7 @@ Ansible 2.x
 |```server_name```|Server Name|
 |```document_root```|Document Root|
 |```SSLEngine```|SSL Engine enabled (On / Off)|
+|```SSLCACertificateFile```|SSL CA Certificate File|
 |```SSLCertificateFile```|SSL Certificate File|
 |```SSLCertificateKeyFile```|SSL Certificate Key File|
 |```extra_directives```|Contains raw apache directives, one per line|
@@ -74,8 +75,9 @@ apache_virtualhosts:
     server_name: localhost
     document_root: /var/www
     SSLEngine: "On"
-    SSLCertificateFile: "{{ apache_certificates.server_cert }}"
-    SSLCertificateKeyFile: "{{ apache_certificates.server_key }}"
+    SSLCACertificateFile: "{{ apache_certificates_dest.ca_cert }}"
+    SSLCertificateKeyFile: "{{ apache_certificates_dest.server_key }}"
+    SSLCertificateFile: "{{ apache_certificates_dest.server_cert }}"
     _directories:
       - _root: /var/www
         Options: Indexes FollowSymLinks
@@ -87,8 +89,8 @@ apache_virtualhosts:
 For more examples see the following role files: -
 
 - ```./defaults/main.yml```
-- ```./tests/templates/defaults/main_alias.yml```
-- ```./tests/templates/defaults/main_proxy.yml```
+- ```./tests/vars/main_alias.yml```
+- ```./tests/vars/main_proxy.yml```
 
 ## Dependencies
 
@@ -98,7 +100,7 @@ None.
 
     - hosts: servers
       roles:
-         - { role: axmac.apache, tags: ["apache"] }
+         - { role: axmac.apache }
 
 ## Testing
 

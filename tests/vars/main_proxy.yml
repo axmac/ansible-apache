@@ -3,9 +3,6 @@ apache_certificates:
   ca_cert_src: 'files/ca_cert.pem'
   server_key_src: 'files/server_key.pem'
   server_cert_src: 'files/server_cert.pem'
-  ca_cert_dest: "{{ ssl_cert_directory }}/apache_ca.crt"
-  server_key_dest: "{{ ssl_cert_directory }}/apache_server.key"
-  server_cert_dest: "{{ ssl_cert_directory }}/apache_server.crt"
 
 apache_mods_enabled:
   - rewrite.load
@@ -34,9 +31,9 @@ apache_virtualhosts:
     server_name: localhost
     document_root: /var/www
     SSLEngine: "On"
-    SSLCACertificateFile: "{{ apache_certificates.ca_cert_dest }}"
-    SSLCertificateKeyFile: "{{ apache_certificates.server_key_dest }}"
-    SSLCertificateFile: "{{ apache_certificates.server_cert_dest }}"
+    SSLCACertificateFile: "{{ apache_certificates_dest.ca_cert }}"
+    SSLCertificateKeyFile: "{{ apache_certificates_dest.server_key }}"
+    SSLCertificateFile: "{{ apache_certificates_dest.server_cert }}"
     _directories:
       - _root: /var/www
         Options: Indexes FollowSymLinks
