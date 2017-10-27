@@ -59,21 +59,21 @@
   tags: certificates
   copy:
     src: "{{ apache_certificates.ca_cert_src }}"
-    dest: "{{ apache_certificates.ca_cert_dest }}"
+    dest: "{{ apache_certificates_dest.ca_cert }}"
   notify: restart apache
 
 - name: Copy server certificate private key
   tags: certificates
   copy:
     src: "{{ apache_certificates.server_key_src }}"
-    dest: "{{ apache_certificates.server_key_dest }}"
+    dest: "{{ apache_certificates_dest.server_key }}"
   notify: restart apache
 
 - name: Copy server certificate public key
   tags: certificates
   copy:
     src: "{{ apache_certificates.server_cert_src }}"
-    dest: "{{ apache_certificates.server_cert_dest }}"
+    dest: "{{ apache_certificates_dest.server_cert }}"
   notify: restart apache
 
 - name: Create apache log directory
