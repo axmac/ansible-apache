@@ -1,3 +1,0 @@
----
-- import_playbook: centos6.yml
-- import_playbook: centos7.yml

@@ -1,0 +1,7 @@
+#
+# Listening ports.
+#
+
+{% for vhost in apache_virtualhosts %}
+Listen {{ vhost.listening_port }}
+{% endfor%}

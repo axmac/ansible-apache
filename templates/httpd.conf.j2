@@ -1,0 +1,166 @@
+#
+# Apache configuration file.
+#
+
+#
+# ServerRoot: The top of the directory tree under which the server's
+# configuration, error, and log files are kept.
+#
+ServerRoot "/etc/httpd"
+
+#Listen 80
+
+#
+# Dynamic Shared Object (DSO) Support
+#
+# To be able to use the functionality of a module which was built as a DSO you
+# have to place corresponding `LoadModule' lines at this location so the
+# directives contained in it are actually available _before_ they are used.
+# Statically compiled modules (those listed by `httpd -l') do not need
+# to be loaded here.
+#
+# Example:
+# LoadModule foo_module modules/mod_foo.so
+#
+Include conf.modules.d/*.conf
+
+#
+# If you wish httpd to run as a different user or group, you must run
+# httpd as root initially and it will switch.  
+#
+# User/Group: The name (or #number) of the user/group to run httpd as.
+# It is usually good practice to create a dedicated user and group for
+# running httpd, as with most system services.
+#
+User apache
+Group apache
+
+# 'Main' server configuration
+#
+# The directives in this section set up the values used by the 'main'
+# server, which responds to any requests that aren't handled by a
+# <VirtualHost> definition.  These values also provide defaults for
+# any <VirtualHost> containers you may define later in the file.
+#
+# All of these directives may appear inside <VirtualHost> containers,
+# in which case these default settings will be overridden for the
+# virtual host being defined.
+#
+
+#
+# ServerAdmin: Your address, where problems with the server should be
+# e-mailed.  This address appears on some server-generated pages, such
+# as error documents.  e.g. admin@your-domain.com
+#
+{% if server_admin is defined %}
+ServerAdmin {{ server_admin }}
+{% endif %}
+
+#
+# ServerName gives the name and port that the server uses to identify itself.
+# This can often be determined automatically, but we recommend you specify
+# it explicitly to prevent problems during startup.
+#
+# If your host doesn't have a registered DNS name, enter its IP address here.
+#
+ServerName {{ server_name | default('localhost') }}
+
+# Any extra directives defined globally.
+{% if apache_extra_directives is defined %}
+{% for line in apache_extra_directives.rstrip().split('\n') %}
+{{ line }}
+{% endfor %}
+{% endif %}
+
+#
+# Directories
+#
+{% if apache_directories is defined %}
+{% for item in apache_directories %}
+<Directory {{ item['_root'] }}>
+{% for name, value in item.iteritems() %}
+{% if '_' not in name %}
+{% if value %}
+  {{ name }} {{ value }}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% if 'extra_directives' in item %}
+
+{% for line in item['extra_directives'].rstrip().split('\n') %}
+  {{ line }}
+{% endfor %}
+{% endif %}
+</Directory>
+{% endfor %}
+{% endif %}
+
+#
+# DocumentRoot: The directory out of which you will serve your
+# documents. By default, all requests are taken from this directory, but
+# symbolic links and aliases may be used to point to other locations.
+#
+#DocumentRoot "/var/www/html"
+{% if document_root is defined %}
+DocumentRoot "{{ document_root }}"
+{% endif %}
+
+#
+# DirectoryIndex: sets the file that Apache will serve if a directory
+# is requested.
+#
+<IfModule dir_module>
+    DirectoryIndex index.html
+</IfModule>
+
+#
+# The following lines prevent .htaccess and .htpasswd files from being 
+# viewed by Web clients. 
+#
+<Files ".ht*">
+    Require all denied
+</Files>
+
+#
+# ErrorLog: The location of the error log file.
+# If you do not specify an ErrorLog directive within a <VirtualHost>
+# container, error messages relating to that virtual host will be
+# logged here.  If you *do* define an error logfile for a <VirtualHost>
+# container, that host's errors will be logged there and not here.
+#
+ErrorLog "{{ error_log | default('logs/error_log') }}"
+
+#
+# LogLevel: Control the number of messages logged to the error_log.
+# Possible values include: debug, info, notice, warn, error, crit,
+# alert, emerg.
+#
+LogLevel {{ log_level | default('warn') }}
+
+#
+# Specify a default charset for all content served; this enables
+# interpretation of all content as UTF-8 by default.  To use the 
+# default browser choice (ISO-8859-1), or to allow the META tags
+# in HTML content to override this choice, comment out this
+# directive:
+#
+AddDefaultCharset {{ default_charset | default('UTF-8') }}
+
+#
+# EnableMMAP and EnableSendfile: On systems that support it, 
+# memory-mapping or the sendfile syscall may be used to deliver
+# files.  This usually improves server performance, but must
+# be turned off when serving from networked-mounted 
+# filesystems or if support for these functions is otherwise
+# broken on your system.
+# Defaults if commented: EnableMMAP On, EnableSendfile Off
+#
+#EnableMMAP off
+EnableSendfile {{ enable_send_file | default('on') }}
+
+# Supplemental configuration
+#
+# Load config files 
+IncludeOptional conf.d/*.load
+Include conf/ports.conf
+IncludeOptional conf.d/*.conf

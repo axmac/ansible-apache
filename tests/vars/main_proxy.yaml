@@ -1,0 +1,88 @@
+---
+apache_certificates:
+  ca_cert_src: 'files/ca_cert.pem'
+  server_key_src: 'files/server_key.pem'
+  server_cert_src: 'files/server_cert.pem'
+
+apache_mods:
+  - mod_name: mime_module
+    conf_file: mime.conf
+    conf_src: "{{ playbook_dir }}/files/mime.conf"
+  - mod_name: prefork_module
+    conf_file: prefork.conf
+    conf_content: |
+      <IfModule mpm_prefork_module>
+        StartServers        8
+        MinSpareServers     5
+        MaxSpareServers     20
+        ServerLimit         256
+        MaxClients          256
+        MaxRequestsPerChild 4000
+      </IfModule>
+  - mod_name: proxy_module
+    conf_file: proxy.conf
+    conf_content: |
+      <IfModule mod_proxy.c>
+        ProxyRequests Off
+        ProxyVia On
+      </IfModule>
+  - mod_name: ssl_module
+    conf_file: ssl.conf
+    conf_src: "{{ playbook_dir }}/files/ssl.conf"
+
+apache_directories:
+  - _root: /var/www
+    Options: Indexes FollowSymLinks
+    AllowOverride: None
+    extra_directives: |
+      Require all granted
+apache_extra_directives: |
+    ProxyRequests Off
+    ProxyVia Off
+
+apache_virtualhosts:
+  - file_name: 10-proxy-vhost.conf
+    listening_ip: "*"
+    listening_port: 80
+    server_name: localhost
+    document_root: /var/www
+    extra_directives: |
+      LogLevel info
+      ErrorLog {{ apache_log_dir }}/localhost-error.log
+      CustomLog {{ apache_log_dir }}/localhost-access.log combined env=!dontlog
+
+      RewriteEngine On
+      RewriteCond %{HTTPS} off
+      RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  - file_name: 10-proxy-vhost-secure.conf
+    listening_ip: "*"
+    listening_port: 443
+    server_name: localhost
+    document_root: /var/www
+    SSLEngine: "On"
+    SSLCACertificateFile: "{{ apache_certificates_dest.ca_cert }}"
+    SSLCertificateKeyFile: "{{ apache_certificates_dest.server_key }}"
+    SSLCertificateFile: "{{ apache_certificates_dest.server_cert }}"
+    _directories:
+      - _root: /var/www
+        Options: Indexes FollowSymLinks
+        AllowOverride: None
+        extra_directives: |
+          Require all granted
+    extra_directives: |
+        ProxyRequests Off
+        ProxyVia Off
+        ProxyPreserveHost On
+
+        <Proxy *>
+            Require all granted
+        </Proxy>
+
+        AllowEncodedSlashes On
+        ProxyPass        /gitstats !
+        ProxyPass        /reviewstats !
+        ProxyPass        /html !
+        ProxyPass        /icons !
+
+        ProxyPass        /   http://localhost:8080/ nocanon
