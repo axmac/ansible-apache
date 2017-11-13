@@ -22,6 +22,9 @@
     - package:
         name: httpd
         state: absent
+    - file:
+        path: /etc/httpd
+        state: absent
     - package:
         name: "{{ item }}"
         state: latest
