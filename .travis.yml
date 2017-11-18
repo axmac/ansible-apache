@@ -37,9 +37,9 @@ install:
   - printf '\nhost_key_checking = False' >> ansible.cfg
 
 script:
-  - ansible-galaxy install -r tests/requirements.yml -p tests/galaxy/roles
-  - ansible-playbook tests/main.yml --syntax-check
-  - ansible-playbook tests/main.yml
+  - ansible-galaxy install -r tests/requirements.yaml -p tests/galaxy/roles
+  - ansible-playbook tests/main.yaml --syntax-check
+  - ansible-playbook tests/main.yaml
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

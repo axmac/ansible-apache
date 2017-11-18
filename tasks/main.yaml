@@ -52,11 +52,16 @@
     name: "{{ service_name }}"
     enabled: yes
 
+- name: Test for certs directory presence
+  stat:
+    path: "{{ ssl_cert_directory }}"
+  register: st
 - name: Create directory to store certificates
   tags: certificates
   file:
     path: "{{ ssl_cert_directory }}"
     state: directory
+  when: not(st.stat.exists)
 
 - name: Copy CA certificate public key
   tags: certificates
@@ -90,26 +95,78 @@
 
 - name: Apply httpd.conf
   template:
-    src: httpd24.conf.j2
+    src: httpd.conf.j2
     dest: "{{ apache_path }}/conf/httpd.conf"
     owner: root
     group: root
     mode: 0644
   notify: restart apache
 
-- name: Apply ssl.conf
+- name: Apply module load directives
   template:
-    src: ssl.conf.j2
-    dest: "{{ apache_path }}/conf.d/ssl.conf"
+    src: module.load.j2
+    dest: "{{ apache_path }}/conf.d/{{ item.mod_name }}.load"
     owner: root
     group: root
     mode: 0644
+  when: (apache_mods is defined) and
+        (not(
+            (item.mod_path is undefined)
+              or (item.mod_path is none)
+              or (item.mod_path | trim == '')
+              )
+          )
   notify: restart apache
+  with_items: "{{ apache_mods | default([]) }}"
+
+- name: Apply module conf from files
+  copy:
+    src: "{{ item.conf_src }}"
+    dest: "{{ apache_path }}/conf.d/{{ item.conf_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: (apache_mods is defined) and
+        (not(
+            (item.conf_src is undefined)
+              or (item.conf_src is none)
+              or (item.conf_src | trim == '')
+              )
+          )
+  notify: restart apache
+  with_items: "{{ apache_mods | default([]) }}"
+
+- name: Apply module conf from inline content
+  template:
+    src: module.conf.j2
+    dest: "{{ apache_path }}/conf.d/{{ item.conf_file }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: (apache_mods is defined) and
+        (not(
+            (item.conf_content is undefined)
+              or (item.conf_content is none)
+              or (item.conf_content | trim == '')
+              )
+          )
+  notify: restart apache
+  with_items: "{{ apache_mods | default([]) }}"
 
 - name: Apply vhosts
   template:
     src: vhost.conf.j2
-    dest: "{{ apache_path }}/conf.d/{{ apache_vhosts_file }}"
+    dest: "{{ apache_path }}/conf.d/{{ item.file_name }}"
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart apache
+  with_items: "{{ apache_virtualhosts }}"
+
+- name: Apply ports.conf
+  template:
+    src: ports.conf.j2
+    dest: "{{ apache_path }}/conf/ports.conf"
     owner: root
     group: root
     mode: 0644

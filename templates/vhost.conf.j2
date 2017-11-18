@@ -1,52 +1,53 @@
-{% if server_name is defined %}
-ServerName {{ server_name }}
-{% endif %}
-{% for vhost in apache_virtualhosts %}
+#
+# Vhost template.
+#
 
-<VirtualHost {{ vhost.listening_ip }}:{{ vhost.listening_port }}>
-{% if vhost.server_name is defined %}
-    ServerName {{ vhost.server_name }}
+<VirtualHost {{ item.listening_ip }}:{{ item.listening_port }}>
+{% if item.server_name is defined %}
+  ServerName {{ item.server_name }}
 {% endif %}
-{% if vhost.server_alias is defined %}
-    ServerAlias {{ vhost.server_alias }}
+{% if item.server_admin is defined %}
+  ServerAdmin {{ item.server_admin }}
 {% endif %}
-{% if vhost.document_root is defined %}
-    DocumentRoot {{ vhost.document_root }}
+{% if item.server_alias is defined %}
+  ServerAlias {{ item.server_alias }}
 {% endif %}
-{% for name, value in vhost.iteritems() %}
+
+{% if item.document_root is defined %}
+  DocumentRoot {{ item.document_root }}
+{% endif %}
+
+{% for name, value in item.iteritems() %}
+{% if '_' not in name %}
+{% if value %}
+  {{ name }} {{ value }}
+{% endif %}
+{% endif %}
+{% endfor %}
+
+{% if 'extra_directives' in item %}
+{% for line in item['extra_directives'].rstrip().split('\n') %}
+  {{ line }}
+{% endfor %}
+{% endif %}
+
+{% if '_directories' in item %}
+{% for _directory in item._directories %}
+  <Directory {{ _directory['_root'] }}>
+{% for name, value in _directory.iteritems() %}
 {% if '_' not in name %}
 {% if value %}
     {{ name }} {{ value }}
 {% endif %}
 {% endif %}
 {% endfor %}
-{% if 'extra_directives' in vhost %}
-
-{% for line in vhost['extra_directives'].rstrip().split('\n') %}
-    {{ line }}
-{% endfor %}
-{% endif %}
-
-{% if '_directories' in vhost %}
-{% for _directory in vhost._directories %}
-    <Directory {{ _directory['_root'] }}>
-{% for name, value in _directory.iteritems() %}
-{% if '_' not in name %}
-{% if value %}
-        {{ name }} {{ value }}
-{% endif %}
-{% endif %}
-{% endfor %}
 {% if 'extra_directives' in _directory %}
 
 {% for line in _directory['extra_directives'].rstrip().split('\n') %}
-        {{ line }}
+    {{ line }}
 {% endfor %}
 {% endif %}
-    </Directory>
+  </Directory>
 {% endfor %}
 {% endif %}
 </VirtualHost>
-
-Listen {{ vhost.listening_port }}
-{% endfor %}

@@ -1,17 +1,11 @@
 ---
-apache_default_vhost_file: 000-default.conf
-apache_default_delete_vhost: true
-
-apache_vhosts_file: "axmac-alias.conf"
-
 apache_log_dir: /var/log/apache2
-
-apache_mods_enabled: []
 
 server_name: localhost
 
 apache_virtualhosts:
-  - listening_ip: '*'
+  - file_name: 10-alias-vhost.conf
+    listening_ip: '*'
     listening_port: 80
     server_name: localhost
     document_root: /var/www

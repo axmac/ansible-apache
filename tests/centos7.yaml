@@ -5,12 +5,12 @@
 
   vars:
     inventory:
-      - name: apache_centos6_1
-        image: "chrismeyers/centos6"
-      - name: apache_centos6_2
-        image: "chrismeyers/centos6"
-      - name: apache_centos6_3
-        image: "chrismeyers/centos6"
+      - name: apache_centos7_1
+        image: "chrismeyers/centos7"
+      - name: apache_centos7_2
+        image: "chrismeyers/centos7"
+      - name: apache_centos7_3
+        image: "chrismeyers/centos7"
     # Connecting to docker on localhost
     provision_docker_use_tls: no
 
@@ -32,28 +32,28 @@
         state: latest
 
 - name: Install Apache with default vhost
-  hosts: apache_centos6_1
+  hosts: apache_centos7_1
   remote_user: root
 
   roles:
     - axmac.apache
 
 - name: Install Apache with alias vhost
-  hosts: apache_centos6_2
+  hosts: apache_centos7_2
   remote_user: root
 
   vars_files:
-    - vars/main_alias.yml
+    - vars/main_alias.yaml
 
   roles:
     - axmac.apache
 
 - name: Install Apache with proxy vhost
-  hosts: apache_centos6_3
+  hosts: apache_centos7_3
   remote_user: root
 
   vars_files:
-    - vars/main_proxy.yml
+    - vars/main_proxy.yaml
 
   roles:
     - axmac.apache
