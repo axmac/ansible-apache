@@ -40,6 +40,8 @@ script:
   - ansible-galaxy install -r tests/requirements.yaml -p tests/galaxy/roles
   - ansible-playbook tests/main.yaml --syntax-check
   - ansible-playbook tests/main.yaml
+  - ansible-playbook tests/centos7-certs.yaml --syntax-check
+  - ansible-playbook tests/centos7-certs.yaml --tags certificates
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

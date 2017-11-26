@@ -29,7 +29,6 @@
         name: "{{ item }}"
         state: latest
       with_items:
-        - centos-release-scl
         - httpd24
         - httpd24-mod_ssl
     - file:
@@ -53,6 +52,7 @@
     enabled: yes
 
 - name: Test for certs directory presence
+  tags: certificates
   stat:
     path: "{{ ssl_cert_directory }}"
   register: st
