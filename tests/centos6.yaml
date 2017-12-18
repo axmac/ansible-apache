@@ -15,9 +15,10 @@
     provision_docker_use_tls: no
 
   roles:
-    - { role: provision_docker, provision_docker_inventory: "{{inventory}}" }
+    - { role: provision_docker, provision_docker_inventory: "{{ inventory }}" }
 
-# Workarounds needed when running the tests in Docker.
+# Workarounds needed when running the tests in Docker, and
+# centos-release-scl source for Apache 2.4 on Centos 6.
 - name: Apply Docker workarounds
   hosts: docker_containers
   remote_user: root
@@ -29,6 +30,10 @@
     # https://docs.oracle.com/cd/E52668_01/E69348/html/uek4-czc_xmc_xt.html
     - package:
         name: yum-plugin-ovl
+        state: latest
+
+    - package:
+        name: centos-release-scl
         state: latest
 
 - name: Install Apache with default vhost

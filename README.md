@@ -12,7 +12,11 @@ Note: httpd service on Centos 6 is `httpd24-httpd`.
 
 ## Requirements
 
-Ansible 2.x
+Ansible 2.x.
+
+Access to centos-release-scl packages httpd24 and httpd24-mod_ssl.
+
+The centos-release-scl repository can be installed on a host via `yum install centos-release-scl`. This role does not manage repositories.
 
 ## Role Variables
 
@@ -121,7 +125,7 @@ None.
 
     $ cd tests
     $ pip install docker-py
-    $ ansible-galaxy install -r requirements.yml
+    $ ansible-galaxy install -r requirements.yaml
 
 ### Run
 
