@@ -36,7 +36,7 @@
   remote_user: root
 
   roles:
-    - axmac.apache
+    - orionhealth.apache
 
 - name: Install Apache with alias vhost
   hosts: apache_centos7_2
@@ -46,7 +46,7 @@
     - vars/main_alias.yaml
 
   roles:
-    - axmac.apache
+    - orionhealth.apache
 
 - name: Install Apache with proxy vhost
   hosts: apache_centos7_3
@@ -56,4 +56,4 @@
     - vars/main_proxy.yaml
 
   roles:
-    - axmac.apache
+    - orionhealth.apache

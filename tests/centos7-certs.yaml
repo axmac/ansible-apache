@@ -38,5 +38,5 @@
     - vars/main_proxy.yaml
 
   roles:
-    - { role: axmac.apache, tags: certificates } # Runs the complete role.
-    - axmac.apache # When certificates tag is supplied, limits to task with that tag.
+    - { role: orionhealth.apache, tags: certificates } # Runs the complete role.
+    - orionhealth.apache # When certificates tag is supplied, limits to task with that tag.

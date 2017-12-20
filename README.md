@@ -1,6 +1,6 @@
-![TravisCI build status](https://travis-ci.org/axmac/axmac.apache.svg?branch=master)
+![TravisCI build status](https://travis-ci.org/orionhealth/orionhealth.apache.svg?branch=master)
 
-# axmac.apache
+# About
 
 This is an Ansible role to install Apache 2.4 on Centos 6 and 7.
 
@@ -10,7 +10,7 @@ Uses [software collections](https://www.softwarecollections.org/en/scls/rhscl/ht
 
 Note: httpd service on Centos 6 is `httpd24-httpd`.
 
-## Requirements
+# Requirements
 
 Ansible 2.x.
 
@@ -18,7 +18,7 @@ Access to centos-release-scl packages httpd24 and httpd24-mod_ssl.
 
 The centos-release-scl repository can be installed on a host via `yum install centos-release-scl`. This role does not manage repositories.
 
-## Role Variables
+# Role Variables
 
 | Variable | Description | Default |
 | -------- | ----------- | ------- |
@@ -66,7 +66,7 @@ The centos-release-scl repository can be installed on a host via `yum install ce
 
 `SSLEngine: On` is transformed in to directive `SSLEngine On`. However `server_name: localhost` is processed by the role / template.
 
-***e.g.*** 
+***e.g.***
 
     apache_virtualhosts:
       - file_name: default-vhost-not-secure.conf
@@ -78,11 +78,11 @@ The centos-release-scl repository can be installed on a host via `yum install ce
           LogLevel info
           ErrorLog {{ apache_log_dir }}/localhost-error.log
           CustomLog {{ apache_log_dir }}/localhost-access.log combined env=!dontlog
-    
+
           RewriteEngine On
           RewriteCond %{HTTPS} off
           RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
-    
+
       - file_name: default-vhost-secure.conf
         listening_ip: "*"
         listening_port: 443
@@ -105,36 +105,32 @@ For more examples see the following role files:
 - `./tests/vars/main_alias.yaml`
 - `./tests/vars/main_proxy.yaml`
 
-## Dependencies
+# Dependencies
 
 None.
 
-## Example Playbook
+# Example Playbook
 
     - hosts: servers
       roles:
-         - { role: axmac.apache }
+         - { role: orionhealth.apache }
 
-## Testing
+# Testing
 
-### Dependencies
+## Dependencies
 
 - Docker
 
-### Setup
+## Setup
 
     $ cd tests
     $ pip install docker-py
     $ ansible-galaxy install -r requirements.yaml
 
-### Run
+## Run
 
     $ ANSIBLE_ROLES_PATH=../../:galaxy/roles ansible-playbook main.yaml
 
-## License
+# License
 
 MIT
-
-## Author Information
-
-Alex McClennan

@@ -1,5 +1,4 @@
 ---
-# handlers file for axmac.apache
 - name: restart apache
   service:
     name: "{{ service_name }}"

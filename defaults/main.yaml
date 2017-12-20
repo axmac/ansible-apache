@@ -1,5 +1,4 @@
 ---
-# defaults file for axmac.apache
 server_name: "{{ ansible_nodename }}"
 apache_path: '/etc/httpd'
 apache_log_dir: '/var/log/httpd24'
